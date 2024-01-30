@@ -52,12 +52,64 @@ Bark was developed for research purposes. It is not a conventional text-to-speec
 ## 🐍 Usage in Python
 
 <details open>
+  <summary><h3>Install</h3></summary>
+
+```
+cd ~/project/
+git clone https://github.com/yanjingang/bark
+cd bark/
+
+# 安装依赖
+pip install --upgrade pip
+pip install . 
+pip install --upgrade transformers scipy
+
+# 下载模型文件（需要科学上网） from https://huggingface.co/suno/bark/tree/main
+mkdir model && cd ~/project/bark/model/
+wget -c -O config.json  https://huggingface.co/suno/bark/resolve/main/config.json?download=true
+wget -c -O vocab.txt  https://huggingface.co/suno/bark/resolve/main/vocab.txt?download=true
+wget -c -O tokenizer.json  https://huggingface.co/suno/bark/resolve/main/tokenizer.json?download=true
+wget -c -O tokenizer_config.json  https://huggingface.co/suno/bark/resolve/main/tokenizer_config.json?download=true
+wget -c -O special_tokens_map.json  https://huggingface.co/suno/bark/resolve/main/special_tokens_map.json?download=true
+wget -c -O speaker_embeddings_path.json  https://huggingface.co/suno/bark/resolve/main/speaker_embeddings_path.json?download=true
+wget -c -O generation_config.json  https://huggingface.co/suno/bark/resolve/main/generation_config.json?download=true
+wget -c -O pytorch_model.bin https://huggingface.co/suno/bark/resolve/main/pytorch_model.bin?download=true
+wget -c -O text_2.pt https://huggingface.co/suno/bark/resolve/main/text_2.pt?download=true
+wget -c -O coarse_2.pt https://huggingface.co/suno/bark/resolve/main/coarse_2.pt?download=true
+wget -c -O fine_2.pt https://huggingface.co/suno/bark/resolve/main/fine_2.pt?download=true
+# 把模型文件放到huggingface默认cache位置（最后边的目录可以通过exampls运行自动下载模型时自动生成，必须使用它自动生成的目录名）
+cp pytorch_model.bin text_2.pt *.json *.txt ~/.cache/huggingface/hub/models--suno--bark/snapshots/70a8a7d34168586dc5d028fa9666aceade177992/
+
+# 测试英文tts
+cd ~/project/bark/examples/
+python3 transformers_en_test.py.py
+
+# 下载中文女生语音包（https://suno-ai.notion.site/8b8e8749ed514b0cbf3f699013548683?v=bc67cff786b04b50b3ceb756fd05f68c）
+# 这里我们选择v2/zh_speaker_6，点进去，下载npz语音包
+mkdir ~/project/bark/speaker
+cd  ~/project/bark/speaker
+wget https://dl.suno-models.io/bark/prompts/npz/zh_speaker_6.npz
+# 解压到zh_speaker_6目录
+cp zh_speaker_6/*.npy /home/work/.cache/huggingface/hub/models--ylacombe--bark-large/snapshots/3610a72f025e842bc9031f50895f90edde6387d3/speaker_embeddings/v2/
+* 注：也可以打开科学上网，直接运行下一步骤，会自动下载语音包
+
+# 测试中文tts
+cd ~/project/bark/examples/
+python3 transformers_zh_test.py
+
+注意：中文语音包，生成出来都一股外国人说中文的口音... 需要研究下这个语音包怎么搞成中国人口音的...
+
+```
+
+</details>
+
+<details open>
   <summary><h3>🪑 Basics</h3></summary>
 
 ```python
 from bark import SAMPLE_RATE, generate_audio, preload_models
 from scipy.io.wavfile import write as write_wav
-from IPython.display import Audio
+#from IPython.display import Audio
 
 # download and load all models
 preload_models()
@@ -73,7 +125,7 @@ audio_array = generate_audio(text_prompt)
 write_wav("bark_generation.wav", SAMPLE_RATE, audio_array)
   
 # play text in notebook
-Audio(audio_array, rate=SAMPLE_RATE)
+#Audio(audio_array, rate=SAMPLE_RATE)
 ```
      
 [pizza1.webm](https://user-images.githubusercontent.com/34592747/cfa98e54-721c-4b9c-b962-688e09db684f.webm)
